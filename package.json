@@ -1,0 +1,22 @@
+{
+  "name": "@teseractmcs/hardcore-api",
+  "version": "1.0.0",
+  "description": "simple wrapper for creating custom hardcore permadeath-like addons",
+  "types": "lib/index.d.ts",
+  "main": "lib/index.js",
+  "files": [
+    "lib/",
+    "README.md"
+  ],
+  "author": "NxmbersCib",
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "ISC",
+  "peerDependencies": {
+    "@teseractmcs/server-api": "^1.0.0"
+  },
+  "dependencies": {
+    "@minecraft/server": "^1.14.0-beta.1.21.20-stable"
+  }
+}

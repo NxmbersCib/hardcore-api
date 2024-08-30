@@ -1,0 +1,9 @@
+enum Registries {
+    OBTAINABLE_ITEM = "OBTAINABLE_ITEM",
+    TRINKET_ITEM = "TRINKET_ITEM",
+    HOLDABLE_ITEM = "HOLDABLE_ITEM",
+    RESURRECT_ITEM = "RESURRECT_ITEM",
+    BANNED_ITEM = "BANNED_ITEM"
+  }
+
+export default Registries
