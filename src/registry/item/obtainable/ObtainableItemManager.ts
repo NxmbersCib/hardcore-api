@@ -10,28 +10,25 @@ import {
 import Registries from "../../Registries";
 import Registry from "../../Registry";
 import { Player, world } from "@minecraft/server";
+import { Hardcore } from "../../../index";
+/**
+ * Manages the obtainable items for players within the game.
+ *
+ * The `ObtainableItemManager` class is responsible for tracking and managing
+ * the status of obtainable items for players. It provides methods to set and
+ * check whether a player has obtained a specific item. Additionally, it can
+ * reset the obtained status of items via a subcommand.
+ *
+ * This class runs periodically to check player inventories and updates the
+ * status of obtainable items accordingly.
+ *
+ */
 
 @CommandAlias("-obtainable")
 @Permission((p) => p.hasTag("admin") || p.isOp())
 class ObtainableItemManager extends Runnable {
-    public setObtained(
-        player: Player,
-        itemId: Identifier,
-        obtained: boolean,
-    ): void {
-        player.setDynamicProperty(this.formatObtainable(itemId), obtained);
-        const obtainable = Registry.get(Registries.OBTAINABLE_ITEM, itemId)
-        if (obtained) {
-            obtainable.onObtained(player);
-        } else {
-            if (obtainable.onLost) obtainable?.onLost(player);
-        }
-    }
-
-    public constructor() {
-        super();
-        this.runTimer(5);
-        Teseract.getCommanManager().registerCommand(this);
+    private formatObtainable(id: Identifier) {
+        return `obtained:${id}`;
     }
 
     private getInventoryStrings(player: Player) {
@@ -43,10 +40,54 @@ class ObtainableItemManager extends Runnable {
         return items;
     }
 
-    private formatObtainable(id: Identifier) {
-        return `obtained:${id}`;
+    public constructor() {
+        super();
+        this.runTimer(5);
+        Teseract.getCommandManager().registerCommands(this);
     }
 
+    /**
+     * Sets the obtained status of an item for a player.
+     *
+     * @param player - The player whose item status is being updated.
+     * @param itemId - The identifier of the item.
+     * @param obtained - `true` if the item is obtained, `false` otherwise.
+     */
+    public setObtained(
+        player: Player,
+        itemId: Identifier,
+        obtained: boolean,
+    ): void {
+        player.setDynamicProperty(this.formatObtainable(itemId), obtained);
+        const obtainable = Registry.get(Registries.OBTAINABLE_ITEM, itemId);
+        if (!obtainable) {
+            return Hardcore.LOGGER.error(`Obtainable ${itemId} not found`);
+        }
+        if (obtained) {
+            obtainable.onObtained(player);
+        } else {
+            if (obtainable.onLost) obtainable?.onLost(player);
+        }
+    }
+
+    /**
+     * Checks if a player has obtained a specific item.
+     *
+     * @param player - The player whose item status is being checked.
+     * @param itemId - The identifier of the item.
+     * @returns `true` if the player has obtained the item, `false` otherwise.
+     */
+    public hasObtained(player: Player, itemId: Identifier) {
+        const obtainable = Registry.get(Registries.OBTAINABLE_ITEM, itemId);
+        if (!obtainable) {
+            return Hardcore.LOGGER.error(`Obtainable ${itemId} not found`);
+        }
+        return player.getDynamicProperty(this.formatObtainable(itemId));
+    }
+
+    /**
+     * Periodically checks all players' inventories and updates the obtained status of items.
+     */
     public override *onRunJob(): Generator<any, any, any> {
         try {
             for (const player of world.getAllPlayers()) {
@@ -75,10 +116,17 @@ class ObtainableItemManager extends Runnable {
                 yield;
             }
         } catch (error) {
-            LOGGER.error(error);
+            Hardcore.LOGGER.error(error);
         }
     }
 
+    /**
+     * Resets the obtained status of an item for a player via a subcommand.
+     *
+     * @param origin - The player who issued the command.
+     * @param obtainableId - The identifier of the obtainable item to reset.
+     * @param target - The target player whose item status is to be reset. If not provided, the origin player is used.
+     */
     @SubCommand("--reset")
     private onResetCommand(
         origin: Player,

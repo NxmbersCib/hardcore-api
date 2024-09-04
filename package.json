@@ -8,13 +8,18 @@
     "lib/",
     "README.md"
   ],
+  "scripts": {
+    "clean": "rmdir /s /q lib",
+    "build": "npm run clean && tsc",
+    "pack": "npm run build && npm pack"
+  },
   "author": "NxmbersCib",
   "publishConfig": {
     "access": "public"
   },
   "license": "ISC",
   "peerDependencies": {
-    "@teseractmcs/server-api": "^1.0.0"
+    "@teseractmcs/server-api": "file:../server-api/teseractmcs-server-api-1.1.0.tgz"
   },
   "dependencies": {
     "@minecraft/server": "^1.14.0-beta.1.21.20-stable"
