@@ -45,7 +45,7 @@ function HardcoreEntity(entityId: Identifier, nameTag: string) {
                 // Subscribe to entity death events
                 world.afterEvents.entityDie.subscribe(
                     (arg: EntityDieAfterEvent) => {
-                        if (arg.deadEntity.typeId !== entityId.toString()) {
+                        if (arg.deadEntity?.typeId !== entityId?.toString()) {
                             return;
                         }
                         this.onDeath(arg);
@@ -57,7 +57,7 @@ function HardcoreEntity(entityId: Identifier, nameTag: string) {
                     (arg: EntityHurtAfterEvent) => {
                         if (
                             // arg.hurtEntity.typeId !== entityId.toString() &&
-                            arg.damageSource.damagingEntity.typeId ===
+                            arg.damageSource.damagingEntity?.typeId ===
                                 entityId.toString()
                         ) {
                             const effects =
