@@ -19,7 +19,7 @@
   },
   "license": "ISC",
   "peerDependencies": {
-    "@teseractmcs/server-api": "file:../server-api/teseractmcs-server-api-1.1.0.tgz"
+    "@teseractmcs/server-api": "^1.0.0-beta.1.14.0-beta"
   },
   "dependencies": {
     "@minecraft/server": "^1.14.0-beta.1.21.20-stable"
